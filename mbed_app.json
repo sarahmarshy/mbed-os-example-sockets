@@ -1,0 +1,16 @@
+{
+    "config": {
+        "trace": false
+        },
+    "macros": ["MBED_HEAP_STATS_ENABLED=1"],
+    "target_overrides": {
+        "*": {
+            "target.features_add": ["IPV4", "IPV6", "COMMON_PAL"],
+            "mbed-mesh-api.6lowpan-nd-channel-page": 0,
+            "mbed-mesh-api.6lowpan-nd-channel": 12,
+            "mbed-mesh-api.6lowpan-nd-channel-mask": "(1<<12)",
+            "mbed-mesh-api.thread-config-panid": "0xDEFA",
+            "mbed-mesh-api.thread-config-channel": 12
+        }
+    }
+}

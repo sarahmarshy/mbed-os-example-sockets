@@ -1,5 +1,6 @@
 #include "mbed.h"
 #include "TCPSocket.h"
+#include "mbed_stats.h"
 
 #define STR(x) STR2(x)
 #define STR2(x) #x
@@ -15,7 +16,7 @@ void http_demo(NetworkInterface *net) {
 
     // Open a socket on the network interface, and create a TCP connection to mbed.org
     socket.open(net);
-    socket.connect("developer.mbed.org", 80);
+    socket.connect("2a00:1450:4013:c00::6a", 80);//google.com
 
     // Send a simple http request
     char sbuffer[] = "GET / HTTP/1.1\r\nHost: developer.mbed.org\r\n\r\n";
@@ -31,6 +32,34 @@ void http_demo(NetworkInterface *net) {
     socket.close();
 }
 
+
+#include "NanostackInterface.h"
+LoWPANNDInterface mesh;
+
+int main() {
+    // Brings up the mesh
+    printf("6Lowpan example\n");
+    if (mesh.connect()) {
+        printf("Connection failed!\n");
+        return -1;
+    }
+
+    // Invoke the demo
+    http_demo(&mesh);
+
+    // Brings down the mesh
+    mesh.disconnect();
+
+    printf("Done\n");
+    mbed_stats_heap_t stats;
+    mbed_stats_heap_get(&stats);
+    printf("Heap metrics\n");
+    printf(" Allocation count: %u\n", stats.alloc_cnt);
+    printf(" Max size: %u\n", stats.max_size);
+    printf(" Current size: %u\n", stats.current_size);
+    printf(" Total size allocated: %u\n", stats.total_size);
+    printf(" Allocation fail count: %u\n", stats.alloc_fail_cnt);
+}
 
 // Example with the ESP8266 interface
 #if defined(MBED_DEMO_WIFI)
@@ -53,7 +82,7 @@ int main() {
 }
 
 // Example using the builtin ethernet interface
-#else
+#elif 0
 #include "EthernetInterface.h"
 
 EthernetInterface eth;
