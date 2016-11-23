@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "TCPSocket.h"
 
+#include "MTSASInterface.h"
 #define STR(x) STR2(x)
 #define STR2(x) #x
 
@@ -15,7 +16,7 @@ void http_demo(NetworkInterface *net) {
 
     // Open a socket on the network interface, and create a TCP connection to mbed.org
     socket.open(net);
-    socket.connect("developer.mbed.org", 80);
+    socket.connect("developer.mbed.org",80);
 
     // Send a simple http request
     char sbuffer[] = "GET / HTTP/1.1\r\nHost: developer.mbed.org\r\n\r\n";
@@ -48,6 +49,30 @@ int main() {
 
     // Brings down the esp8266 
     wifi.disconnect();
+
+    printf("Done\n");
+}
+
+// Example with mts cellular
+#elif defined(MBED_DEMO_CELL)
+#include "MTSASInterface.h"
+
+MTSASInterface cell(RADIO_TX, RADIO_RX, true);
+
+int main() {
+    // Brings up the esp8266
+    printf("cell socket example\r\n");
+
+    // An APN is required for GSM radios.
+    static const char apn[] = "wap.cingular";
+    cell.connect(apn);
+    printf("Connected\r\n");
+
+    // Invoke the demo
+    http_demo(&cell);
+
+    // Brings down the esp8266 
+    cell.disconnect();
 
     printf("Done\n");
 }
