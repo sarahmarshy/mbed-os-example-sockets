@@ -16,7 +16,7 @@ void http_demo(NetworkInterface *net) {
 
     // Open a socket on the network interface, and create a TCP connection to mbed.org
     socket.open(net);
-    socket.connect("developer.mbed.org",80);
+    socket.connect("developer.mbed.org", 80);
 
     // Send a simple http request
     char sbuffer[] = "GET / HTTP/1.1\r\nHost: developer.mbed.org\r\n\r\n";
@@ -31,7 +31,6 @@ void http_demo(NetworkInterface *net) {
     // Close the socket to return its memory and bring down the network interface
     socket.close();
 }
-
 
 // Example with the ESP8266 interface
 #if defined(MBED_DEMO_WIFI)
@@ -67,10 +66,11 @@ int main() {
     static const char apn[] = "wap.cingular";
     cell.connect(apn);
     printf("Connected\r\n");
-
     // Invoke the demo
     http_demo(&cell);
-
+    printf("Getting GPS Coords\r\n");
+    GPSLocation loc = cell.get_gps_location();
+    printf("UTC: %s lat:%f lon: %f\r\n", loc.UTC, loc.latitude, loc.longitude);
     // Brings down the esp8266 
     cell.disconnect();
 
